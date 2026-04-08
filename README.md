@@ -29,9 +29,8 @@ curl -O https://mirrors.ctan.org/systems/knuth/dist/lib/tangle.web
 Expected checksums (SHA-256):
 
 ```
-# TODO: fill after fetch
-tex.web     ???
-tangle.web  ???
+6291efcc8231b6c6aec83b17953b878991aa6106ffed7702e616f003b1413bfc  tangle.web
+a8c0d5d192497a89c7004667241933d5f5a55f5b8a45fd7ba846ef0cfaf93402  tex.web
 ```
 
 ## Build
