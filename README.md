@@ -23,14 +23,14 @@ This repo does not distribute Knuth's files. Grab them yourself:
 
 ```
 curl -O https://mirrors.ctan.org/systems/knuth/dist/tex/tex.web
-curl -O https://mirrors.ctan.org/systems/knuth/dist/lib/tangle.web
+curl -O https://mirrors.ctan.org/systems/knuth/dist/web/tangle.web
 ```
 
 Expected checksums (SHA-256):
 
 ```
-6291efcc8231b6c6aec83b17953b878991aa6106ffed7702e616f003b1413bfc  tangle.web
-a8c0d5d192497a89c7004667241933d5f5a55f5b8a45fd7ba846ef0cfaf93402  tex.web
+60bb22ffeec81e10682ca903c2ccc5ba5c94eb9fe42387a01afc3173e681bf57  tangle.web
+c62ab513ef167e93f71a23bd34f311e243210afd7c7a0f9b779614b71e398324  tex.web
 ```
 
 ## Build

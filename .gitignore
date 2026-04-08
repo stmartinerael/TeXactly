@@ -1,0 +1,9 @@
+# Knuth sources — fetch with: make fetch
+tex.web
+tangle.web
+
+# Build artifacts
+build/
+
+# AI slop
+CLAUDE.md
