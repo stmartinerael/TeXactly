@@ -1,0 +1,11 @@
+# pattern	category	notes
+range check error while evaluating constants	Type system mismatch	Compile-time constant range overflow under FPC defaults
+Comparison might be always (?:true|false) due to range	Type system mismatch	FPC inferred a narrower range than WEB-era assumptions expect
+unreachable code	Pascal syntax / grammar mismatch	Follow-on control-flow warning after an earlier parse or semantic issue
+Can't use readln or writeln on typed file	File / runtime / I/O assumptions	WEB-generated typed-file I/O is not accepted by FPC in this form
+Identifier not found	Identifier / symbol resolution	Symbol resolution failed after tangling
+Constant Expression expected	Pascal syntax / grammar mismatch	FPC required a constant expression in generated Pascal
+Goto statements are not allowed between different procedures	WEB-to-Pascal output constructs unsupported by FPC	Cross-procedure goto emitted by WEB output is rejected
+Syntax error	Pascal syntax / grammar mismatch	FPC parser rejected generated Pascal syntax
+Compilation aborted	Pascal syntax / grammar mismatch	Compiler stopped after a fatal parse or semantic error
+returned an error exitcode	Pascal syntax / grammar mismatch	Compiler driver returned a non-zero exit after failure
