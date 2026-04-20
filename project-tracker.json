@@ -189,7 +189,7 @@
     {
       "id": "ACT-001",
       "title": "Lock the baseline probe workflow",
-      "status": "todo",
+      "status": "blocked",
       "priority": "high",
       "linked_error_ids": [],
       "artifact_refs": [

@@ -17,9 +17,23 @@ COMPILE_LOG := fpc.log
 TAXONOMY_REPORT := error-taxonomy.md
 FPC_OUTPUTS := tex tex.o
 
-.PHONY: all fetch verify tangle compile taxonomy viewer clean \
+.PHONY: all help fetch verify tangle compile taxonomy viewer clean \
 	check-fetch-tools check-verify-tools check-tangle-tools \
 	check-compile-tools check-taxonomy-tools
+
+help:
+	@echo 'Usage: make <target>'
+	@echo ''
+	@echo 'Targets:'
+	@echo '  all       Run fetch, verify, tangle, compile, taxonomy'
+	@echo '  fetch     Download sources listed in $(SOURCE_MANIFEST)'
+	@echo '  verify    Check fetched sources against $(CHECKSUMS)'
+	@echo '  tangle    Run $(TANGLE) on tex.web to produce $(TANGLE_OUTPUTS)'
+	@echo '  compile   Compile tex.p with $(FPC); log to $(COMPILE_LOG)'
+	@echo '  taxonomy  Generate $(TAXONOMY_REPORT) from $(COMPILE_LOG)'
+	@echo '  viewer    Run the progress viewer script'
+	@echo '  clean     Remove fetched, tangled, compiled, and report artifacts'
+	@echo '  help      Show this message'
 
 all:
 	@$(MAKE) fetch
