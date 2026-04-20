@@ -1,0 +1,11 @@
+.codex
+__pycache__/
+error-taxonomy.md
+fpc.log
+tex
+tex.o
+tex.p
+tex.pool
+tex.web
+tangle.web
+weave.web
