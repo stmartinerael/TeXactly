@@ -170,16 +170,20 @@ HTML = """<!doctype html>
     .subtle {
       color: var(--muted);
     }
-    .artifact-list, .error-list, .action-list, .prompt-list {
+    .artifact-list, .error-list, .action-list, .prompt-list, .direction-list {
       display: grid;
       gap: 14px;
     }
-    .artifact-item, .error-card, .action-card, .prompt-card {
+    .artifact-item, .error-card, .action-card, .prompt-card, .direction-card {
       border: 1px solid rgba(215, 204, 185, 0.9);
       border-radius: 14px;
       background: #fffdf8;
       padding: 16px;
     }
+    .direction-status-proposed { color: var(--accent-strong); }
+    .direction-status-active { color: var(--warn); }
+    .direction-status-rejected { color: var(--danger); }
+    .direction-status-done { color: var(--muted); }
     .artifact-item {
       display: flex;
       align-items: center;
@@ -356,6 +360,19 @@ HTML = """<!doctype html>
           <div class="panel-inner">
             <div class="section-title">
               <div>
+                <h2>Directions</h2>
+                <p>Strategic options and decisions. Track which paths are under consideration and which have been chosen.</p>
+              </div>
+              <button class="ghost" id="add-direction-btn">Add Direction</button>
+            </div>
+            <div class="direction-list" id="direction-list"></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-inner">
+            <div class="section-title">
+              <div>
                 <h2>Prompt Sketches</h2>
                 <p>Use these as reusable launch points for deeper investigation or implementation prompts.</p>
               </div>
@@ -446,7 +463,7 @@ HTML = """<!doctype html>
         { label: "Known errors", value: data.known_errors.length },
         { label: "Active items", value: data.action_items.filter(item => item.status === "active").length },
         { label: "Prompt sketches", value: data.prompt_sketches.length },
-        { label: "Artifacts", value: data.artifacts.length }
+        { label: "Directions", value: (data.directions || []).length }
       ];
       document.getElementById("stats").innerHTML = stats.map(stat => `
         <div class="stat">
@@ -582,6 +599,80 @@ HTML = """<!doctype html>
       });
     }
 
+    function renderDirections(data) {
+      const list = document.getElementById("direction-list");
+      list.innerHTML = "";
+      (data.directions || []).forEach((dir, index) => {
+        const card = document.createElement("div");
+        card.className = "direction-card";
+        card.innerHTML = `
+          <div class="card-head">
+            <div>
+              <h3>${dir.id} · ${dir.title}</h3>
+              <div class="meta-row">
+                <span class="pill direction-status-${dir.status}">${dir.status}</span>
+              </div>
+            </div>
+          </div>
+          <p class="subtle">${readText(dir.description)}</p>
+          <div class="split">
+            <div class="field">
+              <label for="dir-status-${index}">Status</label>
+              <select id="dir-status-${index}" data-dir-index="${index}" data-dir-field="status">
+                ${["proposed", "active", "rejected", "done"].map(s => `<option value="${s}" ${s === dir.status ? "selected" : ""}>${s}</option>`).join("")}
+              </select>
+            </div>
+            <div class="field">
+              <label>Linked errors</label>
+              <div class="muted-box">${dir.linked_error_ids.length ? dir.linked_error_ids.join(", ") : "None."}</div>
+            </div>
+          </div>
+          <div class="split">
+            <div class="field">
+              <label>Pros</label>
+              <ul class="refs">${dir.pros.map(p => `<li>${p}</li>`).join("") || "<li class='subtle'>None listed.</li>"}</ul>
+            </div>
+            <div class="field">
+              <label>Cons</label>
+              <ul class="refs">${dir.cons.map(c => `<li>${c}</li>`).join("") || "<li class='subtle'>None listed.</li>"}</ul>
+            </div>
+          </div>
+          <div class="field">
+            <label for="dir-comments-${index}">Comments</label>
+            <textarea id="dir-comments-${index}" data-dir-index="${index}" data-dir-field="comments">${readText(dir.comments)}</textarea>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+      list.querySelectorAll("[data-dir-index]").forEach(control => {
+        control.addEventListener("input", (event) => {
+          const index = Number(event.target.dataset.dirIndex);
+          const field = event.target.dataset.dirField;
+          state.data.directions[index][field] = event.target.value;
+          markDirty();
+        });
+      });
+    }
+
+    function addDirection() {
+      if (!state.data.directions) state.data.directions = [];
+      const nextNumber = state.data.directions.length + 1;
+      state.data.directions.push({
+        id: `DIR-${String(nextNumber).padStart(3, "0")}`,
+        title: "New direction",
+        description: "",
+        status: "proposed",
+        pros: [],
+        cons: [],
+        linked_error_ids: [],
+        linked_action_item_ids: [],
+        comments: ""
+      });
+      renderDirections(state.data);
+      renderStats(state.data);
+      markDirty();
+    }
+
     function renderPromptSketches(data) {
       const list = document.getElementById("prompt-list");
       list.innerHTML = "";
@@ -690,6 +781,7 @@ HTML = """<!doctype html>
       renderArtifacts(data);
       renderKnownErrors(data);
       renderActionItems(data);
+      renderDirections(data);
       renderPromptSketches(data);
       bindNotes(data);
     }
@@ -709,6 +801,7 @@ HTML = """<!doctype html>
     document.getElementById("reload-btn").addEventListener("click", () => loadState().catch(error => setStatus(error.message, "error")));
     document.getElementById("save-btn").addEventListener("click", () => saveState().catch(error => setStatus(error.message, "error")));
     document.getElementById("add-prompt-btn").addEventListener("click", addPrompt);
+    document.getElementById("add-direction-btn").addEventListener("click", addDirection);
     window.addEventListener("keydown", (event) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") {
         event.preventDefault();
