@@ -6,6 +6,11 @@ TANGLE ?= tangle
 FPC ?= fpc
 PYTHON ?= python3
 
+WEBMAN_URL := https://mirrors.ctan.org/systems/knuth/dist/web/webman.tex
+WEBMAN_TEX := webman.tex
+WEBMAN_MD := webman.md
+CONVERT_SCRIPT := scripts/tex_to_md.py
+
 SOURCE_MANIFEST := sources
 CHECKSUMS := checksums.sha256
 TAXONOMY_RULES := taxonomy-rules.tsv
@@ -17,7 +22,7 @@ COMPILE_LOG := fpc.log
 TAXONOMY_REPORT := error-taxonomy.md
 FPC_OUTPUTS := tex tex.o
 
-.PHONY: all help fetch verify tangle compile taxonomy viewer clean \
+.PHONY: all help fetch verify tangle compile taxonomy viewer doc clean \
 	check-fetch-tools check-verify-tools check-tangle-tools \
 	check-compile-tools check-taxonomy-tools
 
@@ -32,6 +37,7 @@ help:
 	@echo '  compile   Compile tex.p with $(FPC); log to $(COMPILE_LOG)'
 	@echo '  taxonomy  Generate $(TAXONOMY_REPORT) from $(COMPILE_LOG)'
 	@echo '  viewer    Run the progress viewer script'
+	@echo '  doc       Download $(WEBMAN_TEX) and convert to $(WEBMAN_MD)'
 	@echo '  clean     Remove fetched, tangled, compiled, and report artifacts'
 	@echo '  help      Show this message'
 
@@ -87,8 +93,18 @@ taxonomy: check-taxonomy-tools $(COMPILE_LOG) $(TAXONOMY_RULES) $(TAXONOMY_SCRIP
 viewer: check-taxonomy-tools project-tracker.json scripts/progress_viewer.py
 	@$(PYTHON) scripts/progress_viewer.py
 
+doc: $(WEBMAN_MD)
+
+$(WEBMAN_TEX):
+	@printf 'Fetching %s\n' "$@"
+	@$(CURL) -L --fail --silent --show-error -o "$@" $(WEBMAN_URL)
+
+$(WEBMAN_MD): $(WEBMAN_TEX) $(CONVERT_SCRIPT)
+	@printf 'Converting %s to %s\n' "$<" "$@"
+	@$(PYTHON) $(CONVERT_SCRIPT) $< $@
+
 clean:
-	@rm -f $(FETCHED_SOURCES) $(TANGLE_OUTPUTS) $(COMPILE_LOG) $(TAXONOMY_REPORT) $(FPC_OUTPUTS)
+	@rm -f $(FETCHED_SOURCES) $(TANGLE_OUTPUTS) $(COMPILE_LOG) $(TAXONOMY_REPORT) $(FPC_OUTPUTS) $(WEBMAN_TEX) $(WEBMAN_MD)
 
 check-fetch-tools:
 	@command -v $(CURL) >/dev/null 2>&1 || { echo "Missing required tool: $(CURL)"; exit 1; }
