@@ -255,6 +255,46 @@
       "comments": ""
     }
   ],
+  "directions": [
+    {
+      "id": "DIR-001",
+      "title": "Continue with FPC and change files",
+      "description": "Keep Free Pascal as the target compiler and address each incompatibility via a TeX change file or compiler flag. This is the most canonical approach and stays within the WEB tradition.",
+      "status": "proposed",
+      "pros": [
+        "Stays true to the WEB/change-file tradition Knuth intended",
+        "FPC is actively maintained and widely available",
+        "Change files keep canonical tex.web untouched"
+      ],
+      "cons": [
+        "Cross-procedure goto (ERR-004) may require significant restructuring",
+        "Each blocker needs individual triage before the build progresses",
+        "Unknown total scope of required changes"
+      ],
+      "linked_error_ids": ["ERR-001", "ERR-002", "ERR-003", "ERR-004", "ERR-005"],
+      "linked_action_item_ids": ["ACT-002", "ACT-004"],
+      "comments": ""
+    },
+    {
+      "id": "DIR-002",
+      "title": "Evaluate alternative Pascal backends",
+      "description": "Compare FPC against other Pascal compilers (e.g. GNU Pascal, p2c, or Turbo Pascal-compatible tools) to see which accepts the tangled tex.p with fewer structural changes.",
+      "status": "proposed",
+      "pros": [
+        "May reveal a compiler that accepts tangle output natively",
+        "Useful baseline for understanding the compatibility surface",
+        "Could collapse multiple blockers at once"
+      ],
+      "cons": [
+        "GNU Pascal is unmaintained; alternatives may be harder to install",
+        "Adds scope to phase 1 before the FPC path is fully triaged",
+        "Findings may still require change files for whichever backend is chosen"
+      ],
+      "linked_error_ids": ["ERR-004", "ERR-005"],
+      "linked_action_item_ids": ["ACT-004"],
+      "comments": ""
+    }
+  ],
   "prompt_sketches": [
     {
       "id": "PROMPT-001",
