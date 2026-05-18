@@ -1,6 +1,9 @@
 .codex
 __pycache__/
-error-taxonomy.md
+/error-taxonomy.md
+/webman.tex
+/webman.md
+
 fpc.log
 tex
 tex.o
